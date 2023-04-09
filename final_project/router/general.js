@@ -10,28 +10,59 @@ public_users.post("/register", (req,res) => {
   return res.status(300).json({message: "Yet to be implemented"});
 });
 
-// Get the book list available in the shop
+
 public_users.get('/',function (req, res) {
-  //Write your code here
-  return res.status(300).json({message: "Yet to be implemented"});
+  return res.send(JSON.stringify(books, null, 4));
 });
 
-// Get book details based on ISBN
+
 public_users.get('/isbn/:isbn',function (req, res) {
-  //Write your code here
-  return res.status(300).json({message: "Yet to be implemented"});
- });
-  
-// Get book details based on author
-public_users.get('/author/:author',function (req, res) {
-  //Write your code here
-  return res.status(300).json({message: "Yet to be implemented"});
+  const { isbn } = req.params;
+
+  if (!isbn) {
+    return res.send('ISBN is not provided!')
+  }
+
+  const bookByISBN = books[isbn];
+
+  if (!bookByISBN) {
+    return res.send(`No book with ISBN ${isbn} was found`)
+  }
+
+  return res.send(JSON.stringify(bookByISBN, null, 4));
+
 });
 
-// Get all books based on title
+
+public_users.get('/author/:author',function (req, res) {
+  const { author } = req.params;
+  if (! author) {
+    return res.send(' No author provided');
+  }
+
+  const booksArr = Object.values(books);
+  const booksByAuthor = booksArr.filter(book => book.author === author);
+
+  if (booksByAuthor.length === 0) {
+    return res.send(`No books by author ${author} were found`);
+  }
+
+  return res.send(JSON.stringify(booksByAuthor, null, 4))
+});
+
+
 public_users.get('/title/:title',function (req, res) {
-  //Write your code here
-  return res.status(300).json({message: "Yet to be implemented"});
+  const { title } = req.params;
+  if (!title) {
+    return res.send(' No title provided!');
+  }
+
+  const booksArr = Object.values(books);
+  const booksByTitle = booksArr.filter(book => book.title.indexOf(title) !== -1);
+  if (booksByTitle.length === 0) {
+    return res.send(`No books with the title ${title} were found`);
+  }
+  return res.send(JSON.stringify(booksByTitle, null, 4));
 });
 
 //  Get book review
